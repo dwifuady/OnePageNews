@@ -99,7 +99,7 @@ public class DetikScrapper : BaseScrapper, IScrapper
             }
 
             contentHtml.Append($"<p>{innerHtml}</p>");
-            contentText.Append(paragraph.InnerText);
+            contentText.AppendLine(paragraph.InnerText);
         }
 
         return (contentHtml.ToString(), contentText.ToString());
