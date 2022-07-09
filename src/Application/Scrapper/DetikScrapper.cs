@@ -93,7 +93,13 @@ public class DetikScrapper : BaseScrapper, IScrapper
         foreach (var paragraph in allParagraphs)
         {
             var innerHtml = paragraph.InnerHtml.Replace("\r\n", "").Replace("\n", "").Replace("\t", "").Replace("\"", "&quot;").Trim();
-            if (string.IsNullOrWhiteSpace(innerHtml) || innerHtml.StartsWith("<strong>") || innerHtml.StartsWith("<em>") || (innerHtml.StartsWith("<a href") && innerHtml.Contains("20detik")))
+            if (string.IsNullOrWhiteSpace(innerHtml) || 
+                innerHtml.StartsWith("<strong>") || 
+                innerHtml.StartsWith("<em>") || 
+                (innerHtml.StartsWith("<a href") && innerHtml.Contains("20detik")) ||
+                innerHtml.Contains("ADVERTISEMENT") ||
+                innerHtml.Contains("SCROLL TO RESUME CONTENT")
+                )
             {
                 continue;
             }
