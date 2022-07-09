@@ -13,12 +13,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure();
 builder.Services.AddApplication();
 
-#if (!DEBUG)
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Listen(IPAddress.Any, Convert.ToInt32(Environment.GetEnvironmentVariable("PORT")));
+    serverOptions.ListenAnyIP(Convert.ToInt32(Environment.GetEnvironmentVariable("PORT")));
 });
-#endif
 
 var app = builder.Build();
 
