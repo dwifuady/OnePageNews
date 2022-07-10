@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Application.Scrapper;
+using Application.Scraper;
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 
@@ -10,9 +10,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddMediatR(Assembly.GetExecutingAssembly());
-        services.AddSingleton<IScrapper, DetikScrapper>();
-        services.AddSingleton<IScrapper, GeneralScrapper>();
-        services.AddHttpClient<BaseScrapper>();
+        services.AddSingleton<IScraper, DetikScraper>();
+        services.AddSingleton<IScraper, GeneralScraper>();
+        services.AddHttpClient<BaseScraper>();
 
         return services;
     }
