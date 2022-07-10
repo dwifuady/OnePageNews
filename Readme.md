@@ -1,7 +1,7 @@
 ![Deployment](https://github.com/dwifuady/OnePageNews/actions/workflows/main.yml/badge.svg)
 
 # OnePageNews
-A news portal scrapper with an overkilled architecture. \
+A news portal scraper with an overkilled architecture. \
 Just for learning purpose.
 
 ## How To Run
@@ -16,7 +16,7 @@ docker build -t onepagenews .
 docker run -dp 5000:5000 -e ASPNETCORE_URLS='http://+:5000' -e PORT='5000' onepagenews:latest
 ```
 
-### Test the scrapper
+### Test the scraper
 ```
 curl -d '{"url":"https://news.detik.com/internasional/d-6171259/pm-sri-lanka-siap-mengundurkan-diri-usai-kediaman-presiden-diserbu-warga"}' -H "Content-Type: application/json" -X POST http://localhost:5000/parse
 ```
