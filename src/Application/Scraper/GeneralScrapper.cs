@@ -2,11 +2,11 @@
 using Domain.Entities;
 using HtmlAgilityPack;
 
-namespace Application.Scrapper;
+namespace Application.Scraper;
 
-public class GeneralScrapper : BaseScrapper, IScrapper
+public class GeneralScraper : BaseScraper, IScraper
 {
-    public GeneralScrapper(HttpClient httpClient) : base(httpClient)
+    public GeneralScraper(HttpClient httpClient) : base(httpClient)
     {
     }
 

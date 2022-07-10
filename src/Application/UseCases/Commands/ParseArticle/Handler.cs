@@ -1,5 +1,5 @@
 ﻿using Application.Extensions;
-using Application.Scrapper;
+using Application.Scraper;
 using Domain.Common;
 using Domain.Entities;
 using MediatR;
@@ -10,8 +10,8 @@ namespace Application.UseCases.Commands.ParseArticle
     public record ParseArticleResponse(string? Title, string? ContentHtml, string? ContentText, bool IsSuccess, string? message = null);
     public class Handler : IRequestHandler<ParseArticleRequest, ParseArticleResponse>
     {
-        private readonly IEnumerable<IScrapper> _scrappers;
-        public Handler(IEnumerable<IScrapper> scrappers)
+        private readonly IEnumerable<IScraper> _scrappers;
+        public Handler(IEnumerable<IScraper> scrappers)
         {
             _scrappers = scrappers;
         }
@@ -30,10 +30,10 @@ namespace Application.UseCases.Commands.ParseArticle
                 case null:
                     article.SetParseFailed("Can't load scrapper");
                     break;
-                case GeneralScrapper when config is null:
+                case GeneralScraper when config is null:
                     article.SetParseFailed($"Can't load config for {article.Provider}");
                     break;
-                case GeneralScrapper:
+                case GeneralScraper:
                     await scrapper.Parse(article, config);
                     break;
                 default:

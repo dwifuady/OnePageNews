@@ -1,9 +1,9 @@
 ﻿using Domain.Common;
 using Domain.Entities;
 
-namespace Application.Scrapper;
+namespace Application.Scraper;
 
-public interface IScrapper
+public interface IScraper
 {
     ProviderEnum Provider { get; }
     Task<Article> Parse(Article article);

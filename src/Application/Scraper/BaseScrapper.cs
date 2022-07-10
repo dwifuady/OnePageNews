@@ -1,12 +1,12 @@
 ﻿using HtmlAgilityPack;
 
-namespace Application.Scrapper
+namespace Application.Scraper
 {
-    public abstract class BaseScrapper
+    public abstract class BaseScraper
     {
         private readonly HttpClient _httpClient;
 
-        protected BaseScrapper(HttpClient httpClient)
+        protected BaseScraper(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }

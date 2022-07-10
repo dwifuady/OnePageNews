@@ -2,16 +2,16 @@
 using Domain.Entities;
 using HtmlAgilityPack;
 
-namespace Application.Scrapper;
+namespace Application.Scraper;
 
-public class DetikScrapper : BaseScrapper, IScrapper
+public class DetikScraper : BaseScraper, IScraper
 {
     private const string ConstTitleXPath = "//h1[@class='detail__title']";
     private const string ConstContentXPath = "//*[@class='detail__body-text itp_bodycontent']";
     private const string ConstAllPageXPath = "//*[@class='detail__anchor-numb ']";
     private readonly List<ElementRule> _elementRules;
 
-    public DetikScrapper(HttpClient httpClient) : base(httpClient)
+    public DetikScraper(HttpClient httpClient) : base(httpClient)
     {
         _elementRules = new List<ElementRule>
         {
@@ -66,6 +66,6 @@ public class DetikScrapper : BaseScrapper, IScrapper
     
     public Task<Article> Parse(Article article, ParseConfig config)
     {
-        throw new Exception("Only implemented by GeneralScrapper");
+        throw new Exception("Only implemented by GeneralScraper");
     }
 }
