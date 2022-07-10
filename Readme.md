@@ -1,3 +1,5 @@
+![Deployment](https://github.com/dwifuady/OnePageNews/actions/workflows/main.yml/badge.svg)
+
 # OnePageNews
 A news portal scrapper with an overkilled architecture. \
 Just for learning purpose.
