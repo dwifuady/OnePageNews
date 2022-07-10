@@ -7,7 +7,7 @@ using MediatR;
 namespace Application.UseCases.Commands.ParseArticle
 {
     public record ParseArticleRequest(string Url) : IRequest<ParseArticleResponse>;
-    public record ParseArticleResponse(string? Title, string? ContentHtml, string? ContentText, bool IsSuccess);
+    public record ParseArticleResponse(string? Title, string? ContentHtml, string? ContentText, bool IsSuccess, string? message = null);
     public class Handler : IRequestHandler<ParseArticleRequest, ParseArticleResponse>
     {
         private readonly IEnumerable<IScrapper> _scrappers;
@@ -20,24 +20,30 @@ namespace Application.UseCases.Commands.ParseArticle
             var article = new Article(request.Url);
 
             article.SetProvider(article.Url.GetProviderEnum());
-
-            var scrapper = _scrappers.SingleOrDefault(s => s.Provider.Equals(article.Provider));
             
-            if (scrapper == null)
+            var config = ConfigLoader.LoadConfig()?.SingleOrDefault(c => c.ProviderEnum.Equals(article.Provider));
+            
+            var scrapper = _scrappers.SingleOrDefault(s => s.Provider.Equals(article.Provider)) ?? _scrappers.SingleOrDefault(s => s.Provider.Equals(ProviderEnum.General));
+            
+            switch (scrapper)
             {
-                article.SetParseFailed("Can't load scrapper");
-            }
-            else
-            {
-                await scrapper.Parse(article);
+                case null:
+                    article.SetParseFailed("Can't load scrapper");
+                    break;
+                case GeneralScrapper when config is null:
+                    article.SetParseFailed($"Can't load config for {article.Provider}");
+                    break;
+                case GeneralScrapper:
+                    await scrapper.Parse(article, config);
+                    break;
+                default:
+                    await scrapper.Parse(article);
+                    break;
             }
             
-            if (article.ParseResult is { IsSuccess: false })
-            {
-                throw new Exception(article.ParseResult.Reason);
-            }
-
-            return new ParseArticleResponse(article.Title, article?.Content?.ContentHtml, article?.Content?.ContentText, true);
+            return article.ParseResult is { IsSuccess: false } ? 
+                new ParseArticleResponse("", "", "", false, article.ParseResult.Reason) : 
+                new ParseArticleResponse(article.Title, article?.Content?.ContentHtml, article?.Content?.ContentText, true);
         }
 
     }

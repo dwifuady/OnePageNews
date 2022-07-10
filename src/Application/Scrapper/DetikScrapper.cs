@@ -6,25 +6,24 @@ namespace Application.Scrapper;
 
 public class DetikScrapper : BaseScrapper, IScrapper
 {
-    private const string ConstTitleDetik = "//h1[@class='detail__title']";
-    private const string ConstContentDetik = "//*[@class='detail__body-text itp_bodycontent']";
-    private const string ConstAllPageDetik = "//*[@class='detail__anchor-numb ']";
-    private List<ElementSkipRule> _elementSkipRules;
+    private const string ConstTitleXPath = "//h1[@class='detail__title']";
+    private const string ConstContentXPath = "//*[@class='detail__body-text itp_bodycontent']";
+    private const string ConstAllPageXPath = "//*[@class='detail__anchor-numb ']";
+    private readonly List<ElementRule> _elementRules;
 
     public DetikScrapper(HttpClient httpClient) : base(httpClient)
     {
-        _elementSkipRules = new List<ElementSkipRule>
+        _elementRules = new List<ElementRule>
         {
-            new(ElementSkipRuleEnum.StartsWith, "<strong>"),
-            new(ElementSkipRuleEnum.StartsWith, "<em>"),
-            new(ElementSkipRuleEnum.Contain, "20detik"),
-            new(ElementSkipRuleEnum.Contain, "ADVERTISEMENT"),
-            new(ElementSkipRuleEnum.Contain, "SCROLL TO RESUME CONTENT")
+            new(ElementRuleEnum.StartsWith, "<strong>", ElementType.Skip),
+            new(ElementRuleEnum.StartsWith, "<em>", ElementType.Skip),
+            new(ElementRuleEnum.Contain, "20detik", ElementType.Skip),
+            new(ElementRuleEnum.Contain, "ADVERTISEMENT", ElementType.Skip),
+            new(ElementRuleEnum.Contain, "SCROLL TO RESUME CONTENT", ElementType.Skip)
         };
     }
     
     public ProviderEnum Provider => ProviderEnum.Detik;
-
     public async Task<Article> Parse(Article article)
     {
         try
@@ -34,17 +33,26 @@ public class DetikScrapper : BaseScrapper, IScrapper
                 await GetHtmlDocument(article.StringUrl)
             };
 
-            SetAllPageUrl(article, htmlDocs.FirstOrDefault());
+            article.SetHtmlDocuments(htmlDocs);
+            article.SetAllPageUrls(ConstAllPageXPath);
 
-            if (article.AllPageUrls is not null)
+            if (article.HasSinglePageUrl)
             {
-                var docs = await GetHtmlDocuments(article.AllPageUrls);
-                htmlDocs.AddRange(docs);
+                htmlDocs.Clear();
+                htmlDocs.Add(await GetHtmlDocument(article.SinglePageUrl!));
+            }
+            else
+            {
+                if (article.AllPageUrls is not null)
+                {
+                    var docs = await GetHtmlDocuments(article.AllPageUrls!); 
+                    htmlDocs.AddRange(docs);
+                }
             }
 
             article.SetHtmlDocuments(htmlDocs);
-            article.ParseTitle(ConstTitleDetik);
-            article.ParseContent(ConstContentDetik, _elementSkipRules);
+            article.ParseTitle(ConstTitleXPath);
+            article.ParseContent(ConstContentXPath, _elementRules);
             
             article.SetParseSuccess();
         }
@@ -56,15 +64,8 @@ public class DetikScrapper : BaseScrapper, IScrapper
         return article;
     }
     
-    private static void SetAllPageUrl(Article article, HtmlDocument? htmlDocument)
+    public Task<Article> Parse(Article article, ParseConfig config)
     {
-        var urls = new List<string>();
-        var nodes = htmlDocument?.DocumentNode.SelectNodes(ConstAllPageDetik);
-        if (nodes is not null)
-        {
-            urls.AddRange(nodes.Select(node => node.GetAttributeValue("href", string.Empty)));
-        }
-
-        article.SetAllPageUrls(urls);
+        throw new Exception("Only implemented by GeneralScrapper");
     }
 }

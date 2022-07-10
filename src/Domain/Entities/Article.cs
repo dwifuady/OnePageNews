@@ -19,11 +19,11 @@ public class Article : BaseEntity
     /// <summary>
     /// single url that contains all content in a single url
     /// </summary>
-    public string? AllPageUrl { get; private set; }
+    public string? SinglePageUrl { get; private set; }
 
     public ParseResult? ParseResult { get; private set; }
 
-    public bool HasSinglePageUrl => AllPageUrls != null && AllPageUrls.Any();
+    public bool HasSinglePageUrl => !string.IsNullOrWhiteSpace(SinglePageUrl);
 
     private IEnumerable<HtmlDocument>? HtmlDocuments { get; set; }
 
@@ -34,10 +34,37 @@ public class Article : BaseEntity
         StringUrl = url;
     }
 
-    public void SetAllPageUrls(IEnumerable<string> urls) => AllPageUrls = urls;
+    public void SetAllPageUrls(string xPath)
+    {
+        if (!IsDocumentsLoaded)
+        {
+            throw new Exception("Article was not loaded");
+        }
+        
+        var urls = new List<string>();
+        var nodes = HtmlDocuments?.FirstOrDefault()?.DocumentNode.SelectNodes(xPath);
+        if (nodes is not null)
+        {
+            urls.AddRange(nodes.Select(node => node.GetAttributeValue("href", string.Empty)));
+        }
 
-    public void SetAllPageUrl(string url) => AllPageUrl = url;
+        AllPageUrls = urls;
+    }
 
+    public void SetSinglePageUrl(string xPath)
+    {
+        if (!IsDocumentsLoaded)
+        {
+            throw new Exception("Article was not loaded");
+        }
+        
+        var node = HtmlDocuments?.FirstOrDefault()?.DocumentNode.SelectSingleNode(xPath);
+        if (node is not null)
+        {
+            SinglePageUrl = node.GetAttributeValue("href", string.Empty);
+        }
+    }
+    
     public void SetParseSuccess(string title, ArticleContent content)
     {
         ParseResult = new ParseResult(true);
@@ -64,17 +91,17 @@ public class Article : BaseEntity
     {
         if (!IsDocumentsLoaded)
         {
-            SetParseFailed("Article was not loaded");
+            throw new Exception("Article was not loaded");
         }
         
         Title = HtmlDocuments?.FirstOrDefault()?.DocumentNode.SelectSingleNode(xPath)?.InnerText?.Trim() ?? "";
     }
 
-    public void ParseContent(string xPath, List<ElementSkipRule> rules)
+    public void ParseContent(string xPath, List<ElementRule>? rules)
     {
         if (!IsDocumentsLoaded)
         {
-            SetParseFailed("Article was not loaded");
+            throw new Exception("Article was not loaded");
         }
         
         var contentHtml = new StringBuilder();
@@ -90,7 +117,7 @@ public class Article : BaseEntity
         Content = new ArticleContent(contentHtml.ToString(), contentText.ToString());
     }
 
-    private static (string Html, string Text) GetContent(HtmlDocument htmlDoc, string xPath, List<ElementSkipRule> rules)
+    private static (string Html, string Text) GetContent(HtmlDocument htmlDoc, string xPath, List<ElementRule>? rules)
     {
         var contentHtml = new StringBuilder();
         var contentText = new StringBuilder();
@@ -100,27 +127,49 @@ public class Article : BaseEntity
         foreach (var paragraph in allParagraphs)
         {
             var innerHtml = paragraph.InnerHtml.Replace("\r\n", "").Replace("\n", "").Replace("\t", "").Replace("\"", "&quot;").Trim();
-            var skipableElement = false;
-            foreach (var rule in rules)
+            var skippableElement = string.IsNullOrWhiteSpace(innerHtml);
+            var endOfArticle = false;
+
+            if (rules != null)
             {
-                switch (rule.RuleEnum)
+                foreach (var rule in rules)
                 {
-                    case ElementSkipRuleEnum.Contain:
-                        if (innerHtml.Contains(rule.RuleValue))
-                        {
-                            skipableElement = true;
-                        }
-                        break;
-                    case ElementSkipRuleEnum.StartsWith:
-                        if (innerHtml.StartsWith(rule.RuleValue))
-                        {
-                            skipableElement = true;
-                        }
-                        break;
+                    switch (rule.RuleEnum)
+                    {
+                        case ElementRuleEnum.Contain:
+                            if (innerHtml.Contains(rule.RuleValue))
+                            {
+                                if (rule.ElementType.Equals(ElementType.End))
+                                {
+                                    endOfArticle = true;
+                                }
+                                else
+                                {
+                                    skippableElement = true;
+                                }
+                            }
+                            break;
+                        case ElementRuleEnum.StartsWith:
+                            if (innerHtml.StartsWith(rule.RuleValue))
+                            {
+                                if (rule.ElementType.Equals(ElementType.End))
+                                {
+                                    endOfArticle = true;
+                                }
+                                else
+                                {
+                                    skippableElement = true;
+                                }
+                            }
+                            break;
+                        default:
+                            continue;
+                    }
                 }
             }
-            
-            if (skipableElement) continue;
+
+            if (endOfArticle) break;
+            if (skippableElement) continue;
             
             contentHtml.Append($"<p>{innerHtml}</p>");
             contentText.AppendLine(paragraph.InnerText);

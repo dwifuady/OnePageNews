@@ -2,7 +2,9 @@
 
 public enum ProviderEnum
 {
-    Default,
+    General,
     Detik,
-    Kompas
+    Kompas,
+    Okezone,
+    CnbcIndonesia
 }

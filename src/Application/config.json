@@ -1,0 +1,118 @@
+﻿{
+  "parseConfigs": [
+    {
+      "provider": "Detik",
+      "titlePath": "//h1[@class='detail__title']",
+      "contentPath": "//*[@class='detail__body-text itp_bodycontent']",
+      "hasSinglePageUrl": false,
+      "hasAllPageUrl": true,
+      "singlePagePath": null,
+      "allPagePath": "//*[@class='detail__anchor-numb ']",
+      "elementRules": [
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<strong>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<em>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "20detik",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "ADVERTISEMENT",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "SCROLL TO RESUME CONTENT",
+          "elementType": 0
+        }
+      ]
+    },
+    {
+      "provider": "Kompas",
+      "titlePath": "//h1[@class='read__title']",
+      "contentPath": "//*[@class='read__content']",
+      "hasSinglePageUrl": true,
+      "hasAllPageUrl": false,
+      "singlePagePath": "//*[@class='paging__link paging__link--show']",
+      "allPagePath": null,
+      "elementRules": [
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<strong>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<em>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "Tulis komentarmu dengan tagar",
+          "elementType": 1
+        }
+      ]
+    },
+    {
+      "provider": "Okezone",
+      "titlePath": "//*[@class='title']",
+      "contentPath": "//*[@class='read']",
+      "hasSinglePageUrl": false,
+      "hasAllPageUrl": false,
+      "singlePagePath": null,
+      "allPagePath": "//*[@class='next']",
+      "elementRules": [
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<strong>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<em>",
+          "elementType": 0
+        }
+      ]
+    },
+    {
+      "provider": "CnbcIndonesia",
+      "titlePath": "//*[@class='jdl']/div[@class='container']/h1",
+      "contentPath": "//*[@class='detail_text']",
+      "hasSinglePageUrl": false,
+      "hasAllPageUrl": false,
+      "singlePagePath": "",
+      "allPagePath": null,
+      "elementRules": [
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<strong>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 0,
+          "ruleValue": "<em>",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "ADVERTISEMENT",
+          "elementType": 0
+        },
+        {
+          "ruleEnum": 1,
+          "ruleValue": "SCROLL TO RESUME CONTENT",
+          "elementType": 0
+        }
+      ]
+    }
+  ]
+}
