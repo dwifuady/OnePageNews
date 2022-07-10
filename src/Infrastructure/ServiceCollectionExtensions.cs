@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMediatR(Assembly.GetExecutingAssembly());
         services.AddSingleton<IScrapper, DetikScrapper>();
-        services.AddSingleton<IScrapper, KompasScrapper>();
+        services.AddSingleton<IScrapper, GeneralScrapper>();
         services.AddHttpClient<BaseScrapper>();
 
         return services;

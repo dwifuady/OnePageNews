@@ -7,4 +7,5 @@ public interface IScrapper
 {
     ProviderEnum Provider { get; }
     Task<Article> Parse(Article article);
+    Task<Article> Parse(Article article, ParseConfig config);
 }
