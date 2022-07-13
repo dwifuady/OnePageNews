@@ -2,12 +2,11 @@
 using Application.Scraper;
 using Domain.Common;
 using Domain.Entities;
+using Dto;
 using MediatR;
 
 namespace Application.UseCases.Commands.ParseArticle
 {
-    public record ParseArticleRequest(string Url) : IRequest<ParseArticleResponse>;
-    public record ParseArticleResponse(string? Title, string? ContentHtml, string? ContentText, bool IsSuccess, string? message = null);
     public class Handler : IRequestHandler<ParseArticleRequest, ParseArticleResponse>
     {
         private readonly IEnumerable<IScraper> _scrappers;
