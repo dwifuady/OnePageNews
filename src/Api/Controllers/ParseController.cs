@@ -1,4 +1,4 @@
-﻿using Application.UseCases.Commands.ParseArticle;
+﻿using Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
